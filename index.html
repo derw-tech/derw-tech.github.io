@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internal Extension Repository</title>
+    <!-- Load Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* Slate-100 background */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+    <!-- Header -->
+    <header class="bg-white shadow-lg border-b border-blue-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <h1 class="text-3xl font-extrabold text-blue-700">
+                Extension Repository
+            </h1>
+            <button onclick="simulateUpload()" class="flex items-center space-x-2 px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-md text-white bg-green-600 hover:bg-green-700 transition duration-150 transform hover:scale-105">
+                <!-- Icon for Upload -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 11.586V3a1 1 0 112 0v8.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+                <span>Upload New Extension</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Repository Dashboard -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        <!-- Upload Status Message Box -->
+        <div id="status-message" class="hidden p-4 mb-6 text-sm rounded-lg bg-blue-100 text-blue-700" role="alert">
+            <!-- Message will be inserted here by JavaScript -->
+        </div>
+
+        <!-- Repository List Header -->
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Available Internal Extensions</h2>
+
+        <!-- Extension List Container -->
+        <div id="extension-list" class="space-y-4">
+            <!-- Extension cards will be rendered here -->
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 py-6 mt-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
+            <p>&copy; 2025 Internal IT Repository. Access restricted to authorized personnel.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Repository Logic -->
+    <script>
+        // Data representing files/extensions in the repository (currently empty)
+        const extensions = [];
+
+        const listContainer = document.getElementById('extension-list');
+        const statusMessage = document.getElementById('status-message');
+       
+
+        /**
+         * Renders the list of extensions in the dashboard.
+         */
+        function renderExtensions() {
+            listContainer.innerHTML = ''; // Clear existing list
+            
+            // Display empty state message if no extensions are present
+            if (extensions.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="p-8 text-center bg-white rounded-xl shadow-lg border border-gray-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <h3 class="mt-2 text-lg font-medium text-gray-900">No Extensions Available</h3>
+                        <p class="mt-1 text-sm text-gray-500">
+                            The repository is currently empty. Click "Upload New Extension" to add the first file.
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Render extension cards if the list is not empty
+            extensions.forEach(ext => {
+                const statusColor = ext.status === 'Approved' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+
+                const extensionCard = `
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col md:flex-row justify-between items-start md:items-center hover:shadow-xl transition duration-200">
+                        <div class="flex-grow mb-4 md:mb-0">
+                            <h3 class="text-xl font-semibold text-gray-900 flex items-center space-x-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                                <span>${ext.name}</span>
+                            </h3>
+                            <div class="mt-2 text-sm text-gray-500 space-y-1 sm:space-y-0 sm:space-x-4 sm:flex">
+                                <span><strong class="font-medium text-gray-700">Version:</strong> ${ext.version}</span>
+                                <span><strong class="font-medium text-gray-700">Uploaded:</strong> ${ext.date}</span>
+                                <span><strong class="font-medium text-gray-700">Author:</strong> ${ext.author}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium ${statusColor}">
+                                ${ext.status}
+                            </span>
+                            <button onclick="simulateDownload(${ext.id})" class="px-4 py-2 text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition duration-150 shadow-md flex items-center space-x-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <span>Download</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                listContainer.insertAdjacentHTML('beforeend', extensionCard);
+            });
+        }
+
+        /**
+         * Utility function to display a temporary message.
+         * @param {string} message The message to display.
+         * @param {string} type The color/type (e.g., 'success', 'warning').
+         */
+        function displayStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `p-4 mb-6 text-sm rounded-lg shadow-md ${type === 'success' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`;
+            statusMessage.classList.remove('hidden');
+
+            setTimeout(() => {
+                statusMessage.classList.add('hidden');
+            }, 4000);
+        }
+
+        /**
+         * Simulates the file upload process.
+         */
+        function simulateUpload() {
+            // In a real application, this would open a file dialog and handle server upload
+            displayStatus("Upload initiated. A new extension must pass automated security scans before appearing in the list.", 'warning');
+        }
+
+        /**
+         * Simulates a file download.
+         * @param {number} id The ID of the extension to download.
+         */
+        function simulateDownload(id) {
+            const ext = extensions.find(e => e.id === id);
+            if (ext) {
+                // In a real application, this would trigger a file download from the server
+                displayStatus(`Downloading ${ext.name} (v${ext.version}). Please confirm security prompts.`, 'success');
+            }
+        }
+
+        // Initial render on load
+        window.onload = renderExtensions;
+
+    </script>
+</body>
+</html>

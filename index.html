@@ -139,11 +139,19 @@
         }
 
         /**
-         * Simulates the file upload process.
+         * Redirects the user to the specified GitHub repository for manual file submission.
          */
         function simulateUpload() {
-            // In a real application, this would open a file dialog and handle server upload
-            displayStatus("Upload initiated. A new extension must pass automated security scans before appearing in the list.", 'warning');
+            const repoUrl = "https://github.com/derw-tech/derw-tech.github.io";
+            
+            // Notify the user of the redirection
+            displayStatus("Redirecting to the official source repository for file submission in a new tab.", 'warning');
+
+            // Perform the redirection after a small delay to allow the status message to be seen
+            setTimeout(() => {
+                window.open(repoUrl, '_blank');
+            }, 500); // 500ms delay
+
         }
 
         /**
